@@ -12,8 +12,8 @@ return {
     },
 
     player = {
-        hungerRate = 4.2, -- Rate at which hunger goes down.
-        thirstRate = 3.8, -- Rate at which thirst goes down.
+        hungerRate = 3.2, -- Rate at which hunger goes down.
+        thirstRate = 2.8, -- Rate at which thirst goes down.
 
         ---@enum BloodType
         bloodTypes = {
@@ -30,7 +30,7 @@ return {
             },
             AccountNumber = {
                 valueFunction = function()
-                    return 'US0' .. math.random(1, 9) .. 'QBX' .. math.random(1111, 9999) .. math.random(1111, 9999) .. math.random(11, 99)
+                    return 'US0' .. math.random(11, 99) .. 'REQUIEM' .. math.random(1111, 9999) .. math.random(1111, 9999) .. math.random(11, 99)
                 end,
             },
             PhoneNumber = {
@@ -45,7 +45,7 @@ return {
             },
             WalletId = {
                 valueFunction = function()
-                    return 'QB-' .. math.random(11111111, 99999999)
+                    return 'REQ-' .. math.random(11111111, 99999999)
                 end,
             },
             SerialNumber = {

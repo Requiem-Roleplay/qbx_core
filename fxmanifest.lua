@@ -22,6 +22,7 @@ client_scripts {
     'client/character.lua',
     'client/discord.lua',
     'bridge/qb/client/main.lua',
+    '@qbx_core/modules/playerdata.lua'
 }
 
 server_scripts {

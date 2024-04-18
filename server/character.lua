@@ -71,7 +71,7 @@ lib.callback.register('qbx_core:server:createCharacter', function(source, data)
     if GetResourceState('qbx_spawn') == 'missing' then
         SetPlayerRoutingBucket(source, 0)
     end
-
+    TriggerClientEvent('ps-housing:client:setupSpawnUI', source, newData)
     lib.print.info(('%s has created a character'):format(GetPlayerName(source)))
     return newData
 end)

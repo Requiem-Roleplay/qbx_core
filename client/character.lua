@@ -244,7 +244,8 @@ local function createCharacter(cid)
         TriggerEvent('qb-clothes:client:CreateFirstCharacter')
     else
         if config.characters.startingApartment then
-            TriggerEvent('apartments:client:setupSpawnUI', newData)
+            --TriggerEvent('apartments:client:setupSpawnUI', newData)
+            TriggerEvent('ps-housing:client:setupSpawnUI', newData)
         else
             TriggerEvent('qbx_core:client:spawnNoApartments')
         end

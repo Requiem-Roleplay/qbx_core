@@ -43,7 +43,7 @@ return {
     },
 
     discord = {
-        enabled = true, -- This will enable or disable the built in discord rich presence.
+        enabled = false, -- This will enable or disable the built in discord rich presence.
 
         appId = '', -- This is the Application ID (Replace this with you own)
 
@@ -70,6 +70,6 @@ return {
 
     --- Only used by QB bridge
     hasKeys = function()
-        return exports.qbx_vehiclekeys:HasKeys()
+        return exports.mm_carkeys:HasTemporaryKey() or exports.mm_carkeys:HasPermanentKey()
     end,
 }

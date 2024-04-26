@@ -41,6 +41,7 @@ function Login(source, citizenid, newData)
         end
     else
         local player = CheckPlayerData(source, newData)
+        TriggerClientEvent('ps-housing:client:setupSpawnUI', source, player.PlayerData)
         player.Functions.Save()
         return true
     end

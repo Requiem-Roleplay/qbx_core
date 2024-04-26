@@ -384,6 +384,11 @@ function CheckPlayerData(source, playerData)
             apartmentId = nil,
         }
     }
+    playerData.metadata.laptop = playerData.metadata.laptop or {
+        background = 'default',
+        dearkfont = true,
+    }
+    playerData.metadata.carboostrep = playerData.metadata.carboostrep or 0
     playerData.metadata.phonedata = playerData.metadata.phonedata or {
         SerialNumber = GenerateUniqueIdentifier('SerialNumber'),
         InstalledApps = {},

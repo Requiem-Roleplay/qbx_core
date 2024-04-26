@@ -25,7 +25,7 @@ return {
         identifierTypes = {
             citizenid = {
                 valueFunction = function()
-                    return lib.string.random('........')
+                    return lib.string.random('R.......')
                 end,
             },
             AccountNumber = {
@@ -137,8 +137,8 @@ return {
         role = {} -- Role to tag for high priority logs. Roles use <@%roleid> and users/channels are <@userid/channelid>
     },
 
-    giveVehicleKeys = function(src, plate)
-        return  exports.mm_carkeys:GiveTempKeys(src, plate)
+    giveVehicleKeys = function(src, plate, vehicle)
+        return exports.qbx_vehiclekeys:GiveKeys(src, plate)
     end,
 
     getSocietyAccount = function(accountName)

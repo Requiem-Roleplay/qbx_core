@@ -335,6 +335,7 @@ return {
         price = 79495,
         category = 'sports',
         hash = `banshee`,
+        tier = A
     },
     banshee2 = {
         name = 'Banshee 900R',
@@ -5375,6 +5376,7 @@ return {
         price = 74392,
         category = 'sports',
         hash = `sultan`,
+        tier = 'A+'
     },
     sultan2 = {
         name = 'Sultan Custom',
@@ -5383,6 +5385,7 @@ return {
         price = 77184,
         category = 'sports',
         hash = `sultan2`,
+        tier = 'S'
     },
     sultan3 = {
         name = 'Sultan Classic Custom',

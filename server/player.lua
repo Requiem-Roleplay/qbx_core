@@ -27,6 +27,7 @@ function Login(source, citizenid, newData)
         local license, license2 = GetPlayerIdentifierByType(source --[[@as string]], 'license'), GetPlayerIdentifierByType(source --[[@as string]], 'license2')
         local playerData = storage.fetchPlayerEntity(citizenid)
         if playerData and (license2 == playerData.license or license == playerData.license) then
+            TriggerClientEvent('ps-housing:client:setupSpawnUI', source, playerData)
             return not not CheckPlayerData(source, playerData)
         else
             DropPlayer(tostring(source), locale('info.exploit_dropped'))
@@ -43,6 +44,7 @@ function Login(source, citizenid, newData)
         local player = CheckPlayerData(source, newData)
         TriggerClientEvent('ps-housing:client:setupSpawnUI', source, player.PlayerData)
         player.Functions.Save()
+        TriggerClientEvent('ps-housing:client:setupSpawnUI', source, newData)
         return true
     end
 
@@ -313,6 +315,7 @@ exports('RemovePlayerFromGang', removePlayerFromGang)
 ---@return Player player
 function CheckPlayerData(source, playerData)
     playerData = playerData or {}
+    local playerState = Player(source)?.state
     local Offline = true
     if source then
         playerData.source = source
@@ -346,6 +349,12 @@ function CheckPlayerData(source, playerData)
     playerData.metadata.hunger = playerData.metadata.hunger or 100
     playerData.metadata.thirst = playerData.metadata.thirst or 100
     playerData.metadata.stress = playerData.metadata.stress or 0
+    if playerState then
+        playerState:set('hunger', playerData.metadata.hunger, true)
+        playerState:set('thirst', playerData.metadata.thirst, true)
+        playerState:set('stress', playerData.metadata.stress, true)
+    end
+
     playerData.metadata.isdead = playerData.metadata.isdead or false
     playerData.metadata.inlaststand = playerData.metadata.inlaststand or false
     playerData.metadata.armor = playerData.metadata.armor or 0
@@ -393,6 +402,11 @@ function CheckPlayerData(source, playerData)
         SerialNumber = GenerateUniqueIdentifier('SerialNumber'),
         InstalledApps = {},
     }
+    playerData.metadata.laptop = playerData.metadata.laptop or {
+        background = 'default',
+        dearkfont = true,
+    }
+    playerData.metadata.carboostrep = playerData.metadata.carboostrep or 0
     local jobs, gangs = storage.fetchPlayerGroups(playerData.citizenid)
 
     local job = GetJob(playerData.job?.name) or GetJob('unemployed')
@@ -436,11 +450,16 @@ end
 ---On player logout
 ---@param source Source
 function Logout(source)
+    local player = GetPlayer(source)
+    if not player then return end
+    local playerState = Player(source)?.state
+    player.PlayerData.metadata.hunger = playerState?.hunger or player.PlayerData.metadata.hunger
+    player.PlayerData.metadata.thirst = playerState?.thirst or player.PlayerData.metadata.thirst
+    player.PlayerData.metadata.stress = playerState?.stress or player.PlayerData.metadata.stress
+
     TriggerClientEvent('QBCore:Client:OnPlayerUnload', source)
     TriggerEvent('QBCore:Server:OnPlayerUnload', source)
 
-    local player = GetPlayer(source)
-    if not player then return end
     player.PlayerData.lastLoggedOut = os.time()
     player.Functions.Save()
 
@@ -448,6 +467,9 @@ function Logout(source)
     QBX.Players[source] = nil
     GlobalState.PlayerCount -= 1
     TriggerClientEvent('qbx_core:client:playerLoggedOut', source)
+    playerState:set('stress', 100, true)
+    playerState:set('thirst', 100, true)
+    playerState:set('hunger', 100, true)
 end
 
 exports('Logout', Logout)
@@ -560,8 +582,8 @@ function CreatePlayer(playerData, Offline)
     ---@param val any
     function self.Functions.SetMetaData(meta, val)
         if not meta or type(meta) ~= 'string' then return end
-        if meta == 'hunger' or meta == 'thirst' then
-            val = val > 100 and 100 or val
+        if (meta == 'hunger' or meta == 'thirst' or meta == 'stress') and self.PlayerData.source then
+            Player(self.PlayerData.source).state:set(meta, lib.math.clamp(val, 0, 100), true)
         end
 
         local oldVal = self.PlayerData.metadata[meta]
@@ -797,8 +819,9 @@ exports('CreatePlayer', CreatePlayer)
 function Save(source)
     local ped = GetPlayerPed(source)
     local playerData = QBX.Players[source].PlayerData
+    local playerState = Player(source)?.state
     local pcoords = playerData.position
-    if not Player(source)?.state.inApartment and not Player(source)?.state.inProperty then
+    if not playerState.inApartment and not playerState.inProperty then
         local coords = GetEntityCoords(ped)
         pcoords = vec4(coords.x, coords.y, coords.z, GetEntityHeading(ped))
     end
@@ -809,6 +832,12 @@ function Save(source)
 
     playerData.metadata.health = GetEntityHealth(ped)
     playerData.metadata.armor = GetPedArmour(ped)
+
+    if playerState.isLoggedIn then
+        playerData.metadata.hunger = playerState.hunger or 0
+        playerData.metadata.thirst = playerState.thirst or 0
+        playerData.metadata.stress = playerState.stress or 0
+    end
 
     CreateThread(function()
         storage.upsertPlayerEntity({

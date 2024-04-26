@@ -269,6 +269,8 @@ local function chooseCharacter()
     Wait(1000)
     SetEntityCoords(cache.ped, randomLocation.pedCoords.x, randomLocation.pedCoords.y, randomLocation.pedCoords.z, false, false, false, false)
     SetEntityHeading(cache.ped, randomLocation.pedCoords.w)
+    ---@diagnostic disable-next-line: missing-parameter
+    lib.callback('qbx_core:server:setCharBucket', false)
     Wait(1500)
     ShutdownLoadingScreen()
     ShutdownLoadingScreenNui()
@@ -283,18 +285,18 @@ local function chooseCharacter()
         options[i] = {
             title = character and ('%s %s - %s'):format(character.charinfo.firstname, character.charinfo.lastname, character.citizenid) or locale('info.multichar_new_character', i),
             metadata = character and {
-                Name = name,
+                ['󰀄 Name'] = name,
                 Gender = character.charinfo.gender == 0 and locale('info.char_male') or locale('info.char_female'),
-                Birthdate = character.charinfo.birthdate,
-                Nationality = character.charinfo.nationality,
-                ['Account Number'] = character.charinfo.account,
-                Bank = lib.math.groupdigits(character.money.bank),
-                Cash = lib.math.groupdigits(character.money.cash),
-                Job = character.job.label,
-                ['Job Grade'] = character.job.grade.name,
-                Gang = character.gang.label,
-                ['Gang Grade'] = character.gang.grade.name,
-                ['Phone Number'] = character.charinfo.phone
+                [' Birthdate'] = character.charinfo.birthdate,
+                [' Nationality'] = character.charinfo.nationality,
+                ['󰸎 Account Number'] = character.charinfo.account,
+                ['󱙹 Bank'] = lib.math.groupdigits(character.money.bank),
+                ['󰄕 Cash'] = lib.math.groupdigits(character.money.cash),
+                ['󰖵 Job'] = character.job.label,
+                ['󰅇 Job Grade'] = character.job.grade.name,
+                ['󰘺 Gang'] = character.gang.label,
+                [' Gang Grade'] = character.gang.grade.name,
+                [' Phone Number'] = character.charinfo.phone
             } or nil,
             icon = 'user',
             onSelect = function()
@@ -403,6 +405,7 @@ CreateThread(function()
             Wait(250)
             lib.requestModel(model, config.loadingModelsTimeout)
             SetPlayerModel(cache.playerId, model)
+            SetModelAsNoLongerNeeded(model)
             chooseCharacter()
             break
         end
